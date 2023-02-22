@@ -3,6 +3,8 @@
 <button id="postEmployees" class="btn btn-success">postEmployees</button>
 <button id="putEmployees" class="btn btn-success">putEmployees</button>
 <button id="deleteEmployees" class="btn btn-success">deleteEmployees</button>
+<div id="employeeList"></div>
+<input type="text" id="empId"/>
 
 @section Scripts{
     <script>
@@ -10,29 +12,100 @@
         $("#getEmployees").on("click",(event)=>{
             //alert("getEmployees");
             fetch(`${WebAPIBaseAddress}/api/Employees`,{
-                method:"GET",              
-            
+                method:"get",     
             }).then(result=>{
                 if(result.ok){
                     return result.json();
                 }
-            
             }).then(data=>{
-                alert(JSON.stringify(data));
+                //alert(JSON.stringify(data));
+                $("#employeeList").empty();
+                var str = "<ul>"
+                $.each(data, function (index,item) {
+                    str += `<li>${item.employeeId},${item.firstName},${item.lastName},${item.title}</li>`;
+                });
+                str +="</ul>"
+                $("#employeeList").html(str);
             }).catch(err=>{
                 alert(err);
             });
         });
         $("#getEmployeesById").on("click",(event)=>{
+            var empId=$("#empId").val();
+            fetch(`${WebAPIBaseAddress}/api/Employees/${empId}`, {
+                method:"GET"
+
+            }).then(result=>{
+                if(result.ok){
+                    return result.json();
+                }
+            }).then(data=>{
+                alert(JSON.stringify(data));
+            }).catch(err=>{
+                alert(err);
+            });
             //alert("getEmployeesById");
         });
         $("#postEmployees").on("click", (event) => {
+            var emp={
+                EmployeeId:0,
+                FirstName:"Student",
+                LastName:"A",
+                Title:"Sales"
+            };
+            fetch(`${WebAPIBaseAddress}/api/Employees`, {
+                method:"POST",
+                body:JSON.stringify(emp),
+                headers:{
+                    "content-type":"application/json"
+                }
+            }).then(result => {
+                if(result.ok){
+                    return result.text();
+                }
+            }).then(data=>{
+                alert(data);
+            }).catch(err=>{
+                alert(err);
+            });
             //alert("postEmployees");
         });
         $("#putEmployees").on("click", (event) => {
-            //alert("putEmployees");
+            //var emp={
+            //    EmployeeId:1000,
+            //    FirstName:"",
+            //    LastName:"",
+            //    Title:""
+            //};
+            //fetch(`${WebAPIBaseAddress}/api/Employees/111`,{
+            //    method:"put",
+            //    body:JSON.stringify(emp),
+            //    headers:{
+            //        "content-type": "application/json"
+            //    }
+            //}).then(result=>{
+            //    if(result.ok){
+            //        return result.text();
+            //    }
+            //}).then(data => {
+            //    alert(data);
+            //}).catch(err => {
+            //    alert(err);
+            //});
+            ////alert("putEmployees");
         });
         $("#deleteEmployees").on("click",(event)=>{
+            fetch(`${WebAPIBaseAddress}/api/Employees/1`,{
+                method:"delete"
+            }).then(result=>{
+                if(result.ok){
+                    return result.text();
+                }
+            }).then(data=>{
+                alert(data);
+            }).catch(err=>{
+                alert(err);
+            });
             //alert("deleteEmployees");
         });
     </script>
