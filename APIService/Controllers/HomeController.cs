@@ -21,6 +21,10 @@ namespace APIService.Controllers
         {
             return View();
         }
+        public IActionResult Employees()
+        {
+            return View();
+        }
         public IActionResult PM25()
         {
             return View();
