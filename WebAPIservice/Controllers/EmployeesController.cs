@@ -64,31 +64,24 @@ namespace WebAPIservice.Controllers
         public async Task<string> PutEmployees(int id, EmployeeDTO employees)
         {
             if (id != employees.EmployeeId)
-            {
-                return "參數錯誤!!";
-            }
+            { return "參數錯誤!!";}
             Employees? emp = await _context.Employees.FindAsync(employees.EmployeeId);
             emp.FirstName=employees.FirstName;
             emp.LastName=employees.LastName;
             emp.Title=employees.Title;
             _context.Entry(emp).State = EntityState.Modified;
-
             try
-            {
-                await _context.SaveChangesAsync();
-            }
+            {  await _context.SaveChangesAsync(); }
             catch (DbUpdateConcurrencyException)
             {
                 if (!EmployeesExists(id))
                 {
                     return "記錄錯誤!!";
                 }
-                else
-                {
+                else   {
                     throw;
                 }
             }
-
             return "修改成功";
         }
 

@@ -71,31 +71,31 @@
             //alert("postEmployees");
         });
         $("#putEmployees").on("click", (event) => {
-            //var emp={
-            //    EmployeeId:1000,
-            //    FirstName:"",
-            //    LastName:"",
-            //    Title:""
-            //};
-            //fetch(`${WebAPIBaseAddress}/api/Employees/111`,{
-            //    method:"put",
-            //    body:JSON.stringify(emp),
-            //    headers:{
-            //        "content-type": "application/json"
-            //    }
-            //}).then(result=>{
-            //    if(result.ok){
-            //        return result.text();
-            //    }
-            //}).then(data => {
-            //    alert(data);
-            //}).catch(err => {
-            //    alert(err);
-            //});
-            ////alert("putEmployees");
+            var emp={
+                EmployeeId:10,
+                FirstName:"AA",
+                LastName:"FF",
+                Title:"EE"
+            };
+            fetch(`${WebAPIBaseAddress}/api/Employees/10`,{
+                method:"put",
+                body:JSON.stringify(emp),
+                headers:{
+                    "content-type": "application/json"
+                }
+            }).then(result=>{
+                if(result.ok){
+                    return result.text();
+                }
+            }).then(data => {
+                alert(data);
+            }).catch(err => {
+                alert(err);
+            });
+            //alert("putEmployees");
         });
         $("#deleteEmployees").on("click",(event)=>{
-            fetch(`${WebAPIBaseAddress}/api/Employees/1`,{
+            fetch(`${WebAPIBaseAddress}/api/Employees/10`,{
                 method:"delete"
             }).then(result=>{
                 if(result.ok){
