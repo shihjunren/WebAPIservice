@@ -29,6 +29,10 @@ namespace APIService.Controllers
         {
             return View();
         }
+        public IActionResult VUESPA()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {

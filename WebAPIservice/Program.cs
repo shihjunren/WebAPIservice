@@ -16,8 +16,7 @@ var MyAllowSpecificOrigins = "AllowAny";
 builder.Services.AddCors(options =>{
     options.AddPolicy(
         name: MyAllowSpecificOrigins,
-        policy => policy.WithOrigins("https://localhost:7029").WithHeaders("*").WithMethods("*"));
-    
+        policy => policy.WithOrigins("*").WithHeaders("*").WithMethods("*"));
 } 
     );
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

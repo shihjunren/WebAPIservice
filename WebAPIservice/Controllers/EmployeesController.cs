@@ -23,6 +23,19 @@ namespace WebAPIservice.Controllers
             _context = context;
         }
 
+        [HttpPost("Filter")] //避免相同動詞與相同URI 搜尋多個欄位
+        public async Task<IEnumerable<EmployeeDTO>> FilterEmployees([FromBody]EmployeeDTO employeeDTO)
+        {
+            return _context.Employees.Where(emp=>emp.FirstName.Contains(employeeDTO.FirstName)|| emp.LastName.Contains(employeeDTO.FirstName) ||emp.Title.Contains(employeeDTO.FirstName)).Select(emp=>new EmployeeDTO
+            {
+                EmployeeId=emp.EmployeeId,
+                FirstName=emp.FirstName,
+                LastName=emp.LastName,
+                Title=emp.Title,
+            });
+        }
+
+
         // GET: api/Employees
         [HttpGet]
         //傳回值型態Task為非同步傳回值{ async Task test(){} <-函式為非同步函式 }
@@ -37,6 +50,7 @@ namespace WebAPIservice.Controllers
 
             });
         }
+        
 
         // GET: api/Employees/5
         [HttpGet("{id}")]

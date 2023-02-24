@@ -1,0 +1,278 @@
+﻿@section Styles{
+    <style>
+        thead {
+            background-color: darkred;
+            color: white
+        }
+    </style>
+}
+<div id="app" class="container">
+    @*篩選*@
+    <div class="row" style="width:50%;margin-left:auto;margin-right:0">
+        <label class="col-lg-3 form-label">篩選</label>
+        <input type="text" class="col-lg-7 form-control" v-model="filter" placeholder="請輸入關鍵字" />
+        <button class="btn btn-outline-dark" @@click="filterEmployees">篩選</button>
+    </div>
+    <div class="form-group">
+        <button type="button" @@click="showModal" class="btn btn-primary">新增紀錄</button>
+
+    </div>
+    @*TABLE*@
+    <div class="form-group">
+        <div class="row">
+            <div class="col-12 mt-4">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>員工編號</td>
+                            <td>名</td>
+                            <td>姓</td>
+                            <td>職稱</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in employeeDTOes">
+                            <template v-if="item.Edit==true">
+                                <td>{{item.employeeId}}</td>
+                                <td><input v-model="item.firstName" /></td>
+                                <td><input v-model="item.lastName" /></td>
+                                <td><input v-model="item.title" /></td>
+                                <td>
+                                    <button type="button" class="btn btn-warning" @@click="update(item)">修改</button> |
+                                    <button type="button" class="btn btn-info" @@click="cancel">取消</button>
+                                </td>
+                            </template>
+                            <template v-else>
+                                <td>{{item.employeeId}}</td>
+                                <td>{{item.firstName}}</td>
+                                <td>{{item.lastName}}</td>
+                                <td>{{item.title}}</td>
+                                <td>
+                                    <button type="button" class="btn btn-success" @@click="edit(item.employeeId)">編輯</button> |
+                                    <button type="button" class="btn btn-danger" @@click="deleteEmployee(item.employeeId)">刪除</button>
+                                </td>
+                            </template>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @*新增員工紀錄*@
+
+
+
+    <div class="modal fade" id="insertModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitleId">新增員工紀錄</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">FirstName:</label>
+                        <input type="text" class="form-control" v-model="firstName" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">LastName:</label>
+                        <input type="text" class="form-control" v-model="lastName" />
+                    </div> <div class="form-group">
+                        <label class="form-label">Title:</label>
+                        <input type="text" class="form-control" v-model="title" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" @@click="insert">新增員工</button>
+                </div>
+            </div>
+        </div>
+        @*<div class="modal fade">
+        <div class="">
+        <div class="">
+        <div class="">
+        <h5></h5>
+        <button></button>
+        </div>
+        <div class="modal-body">
+        <div class="form-group">
+        <label class="form-label">FirstName:</label>
+        <input type="text" v-model="firstName" class="form-control" />
+        <label class="form-label">LastName:</label>
+        <input type="text" v-model="lastName" class="form-control" />
+        <label class="form-label">Title:</label>
+        <input type="text" v-model="title" class="form-control" />
+        </div>
+
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-success" dat-bs-dismiss="modal">關閉</button>
+        <button type="button" class="btn btn-primary" @@click="insert">新增員工</button>
+        </div>
+        </div>
+        </div>
+        </div>*@
+
+
+
+    </div>
+
+    @section Scripts{
+        @*<script src="https://unpkg.com/vue@next"></script>*@
+        <script src="https://unpkg.com/vue@3.2.36"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+
+        <script>
+            var WebAPIBaseAddress = "https://localhost:44371";
+            var vueApp = {
+                data() {
+                    return {
+                        employeeDTOes: [],
+                        filter: "",
+                        employeeId: null,
+                        firstName: null,
+                        lastName: null,
+                        title: null,
+                        firstNameOld: null,
+                        lastNameOld: null,
+                        titleOld: null,
+                    };
+                },
+                mounted: function () {
+                    let _this = this;
+                    _this.getEmployeeDTOes();
+
+                },
+                methods: {
+                    getEmployeeDTOes: function () {
+                        //alert("getEmployeeDTOes")
+                        let _this = this;
+                        axios.get(`${WebAPIBaseAddress}/api/Employees`).then(response => {
+                            //alert(JSON.stringify(response.data));
+                            _this.employeeDTOes = response.data;
+                            var employeeList = [];
+                            for (var i = 0; i < _this.employeeDTOes.length; i++) {
+                                var item = _this.employeeDTOes[i];
+                                item.Edit = false;
+                                employeeList.push(item);
+                            }
+                            _this.employeeDTOes = employeeList;
+                        });
+                    },
+                    filterEmployees: function () {
+                        //alert("filterEmployees")
+                        let _this = this;
+                        //參數=p 來自
+                        var p = {};
+                        p.FirstName = _this.filter;
+                        axios.post(`${WebAPIBaseAddress}/api/Employees/Filter`, p).then(response => {
+                            //alert(JSON.stringify(response.data));
+                            _this.employeeDTOes = response.data;
+                            var employeeList = [];
+                            for (var i = 0; i < _this.employeeDTOes.length; i++) {
+                                var item = _this.employeeDTOes[i];
+                                item.Edit = false;
+                                employeeList.push(item);
+                            }
+                            _this.employeeDTOes = employeeList;
+                        });
+                    },
+                    edit: function (employeeId) {
+                        //alert("edit")
+                        let _this = this;
+                        var employeeList = [];
+                        for (var i = 0; i < _this.employeeDTOes.length; i++) {
+                            var item = _this.employeeDTOes[i];
+                            if (item.employeeId == employeeId) {
+                                item.Edit = true;
+                                _this.firstNameOld = item.firstName;
+                                _this.lastNameOld = item.lastName;
+                                _this.titleOld = item.title;
+                            }
+                            else {
+                                item.Edit = false;
+                            }
+                            employeeList.push(item);
+                        }
+                        _this.employeeDTOes = employeeList;
+                    },
+                    cancel: function () {
+                        //alert("cancel")
+                        let _this = this;
+                        var employeeList = [];
+                        for (var i = 0; i < _this.employeeDTOes.length; i++) {
+                            var item = _this.employeeDTOes[i];
+
+                            if (item.Edit = true) {
+
+                                item.Edit = false;
+                                item.firstName = _this.firstNameOld;
+                                item.lastName = _this.lastNameOld;
+                                item.title = _this.titleOld;
+                            }
+
+                            employeeList.push(item);
+                        }
+                        _this.employeeDTOes = employeeList;
+                    },
+                    update: function (item) {
+                        //alert("update")
+                        let _this = this;
+                        var p = {
+                            EmployeeId: item.emplyeeId,
+                            FirstName: item.firstName,
+                            LastName: item.lastName,
+                            Title: item.title,
+                        };
+
+                        axios.put(`${WebAPIBaseAddress}/api/Employees/${item.employeeId}`, p).then(
+                            response => {
+                                alert(response.data);
+                                _this.getEmployeeDTOes();
+                                _this.cancel();
+                            }
+                        );
+                    },
+                    deleteEmployee: function (employeeId) {
+                        //alert("deleteEmployee")
+                        let _this = this;
+                        var ret = confirm("確定要刪除嗎?");
+                        if (ret == true) {
+                            axios.delete(`${WebAPIBaseAddress}/api/Employees/${employeeId}`).then(
+                                response => {
+                                    alert(response.data);
+                                    _this.getEmployeeDTOes();
+
+                                }
+                            );
+                        }
+
+                    },
+                    showModal: function () {
+                        //alert("ShowModal")
+                        $("#insertModal").modal("show");
+                    },
+                    insert: function () {
+                        //alert("insert")
+                        let _this = this;
+                        var p = {
+                            EmployeeId: 0,
+                            FirstName: _this.firstName,
+                            LastName: _this.lastName,
+                            Title: _this.title,
+                        };
+                        axios.post(`${WebAPIBaseAddress}/api/Employees`, p).then(
+                            response => {
+                                alert(response.data);
+                                window.location = "/Home/VUESPA"
+                            });
+                    },
+
+                },
+            };
+            var app = Vue.createApp(vueApp).mount("#app");
+        </script>
+    }
