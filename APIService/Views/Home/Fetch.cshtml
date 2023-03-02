@@ -71,13 +71,14 @@
             //alert("postEmployees");
         });
         $("#putEmployees").on("click", (event) => {
+            var empId = $("#empId").val();
             var emp={
-                EmployeeId:10,
+                EmployeeId: empId,
                 FirstName:"AA",
                 LastName:"FF",
                 Title:"EE"
             };
-            fetch(`${WebAPIBaseAddress}/api/Employees/10`,{
+            fetch(`${WebAPIBaseAddress}/api/Employees/${empId}`, {
                 method:"put",
                 body:JSON.stringify(emp),
                 headers:{
@@ -95,7 +96,8 @@
             //alert("putEmployees");
         });
         $("#deleteEmployees").on("click",(event)=>{
-            fetch(`${WebAPIBaseAddress}/api/Employees/10`,{
+            var empId = $("#empId").val();
+            fetch(`${WebAPIBaseAddress}/api/Employees/${empId}`, {
                 method:"delete"
             }).then(result=>{
                 if(result.ok){
